@@ -4,7 +4,9 @@ import plotly
 import pandas as pd
 import re
 import nltk
+
 nltk.download('stopwords')
+nltk.download('punkt')
     
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
