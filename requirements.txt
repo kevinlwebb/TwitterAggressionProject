@@ -6,3 +6,4 @@ flask
 scikit-learn
 sqlalchemy
 joblib
+tweepy

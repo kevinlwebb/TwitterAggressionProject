@@ -34,8 +34,8 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/DisasterResponse.db')
-df = pd.read_sql_table('project', engine)
+engine = create_engine('sqlite:///../data/TweetSentiment.db')
+df = pd.read_sql_table('tweets', engine)
 
 # load model
 model = load("../models/classifier.pkl")
@@ -50,18 +50,18 @@ def index():
     
     # Graph 1
     graph_one = []   
-    genre_counts = df.groupby('genre').count()['message']
-    genre_names = list(genre_counts.index)
+    label_counts = df.groupby('label').count()['cleaned_tweet']
+    label_names = list(label_counts.index)
 
     graph_one.append(
         Bar(
-            x=genre_names,
-            y=genre_counts
+            x=label_names,
+            y=label_counts
         )
     )
 
-    layout_one = dict(title = 'Distribution of Message Genres',
-        xaxis = dict(title = 'Genre'),
+    layout_one = dict(title = 'Distribution of Message Labels',
+        xaxis = dict(title = 'Label'),
         yaxis = dict(title = 'Count'),
     )
     
@@ -70,20 +70,20 @@ def index():
     graph_two = []  
 
     sw = stopwords.words("english")
-    text = df.message.str.cat(sep=' ')
+    text = df.cleaned_tweet.str.cat(sep=' ')
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     str_list = text.split(" ")
     s = pd.Series(str_list)
     s = s[s != ""]
     s = s[~s.isin(sw)]
 
-    genre_counts = s.value_counts()[:10].tolist()
-    genre_names = s.value_counts()[:10].index.tolist()
+    word_counts = s.value_counts()[:10].tolist()
+    word_names = s.value_counts()[:10].index.tolist()
 
     graph_two.append(
         Bar(
-            x=genre_names,
-            y=genre_counts
+            x=word_names,
+            y=word_counts
         )
     )
 
@@ -110,16 +110,18 @@ def go():
     # save user input in query
     query = request.args.get('query', '') 
 
+    print(model.predict([query]))
+
     # use model to predict classification for query
-    classification_labels = model.predict([query])[0]
-    classification_results = dict(zip(df.columns[4:], classification_labels))
+    classification_label = model.predict([query])[0]
 
     # This will render the go.html Please see that file. 
     return render_template(
         'go.html',
         query=query,
-        classification_result=classification_results
+        classification_result={"result": classification_label}
     )
+
 
 
 def main():

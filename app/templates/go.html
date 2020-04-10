@@ -9,16 +9,14 @@
 
 {% block content %}
     <h1 class="text-center">Result</h1>
-        <ul class="list-group">
-            {% for category, classification in classification_result.items() %}
-                {% if classification == 1 %}
-                    <li class="list-group-item list-group-item-success text-center">{{category.replace('_', ' ').title()}}</li>
-                {% else %}
-                    <li class="list-group-item list-group-item-dark text-center">{{category.replace('_', ' ').title()}}</li>
-                {% endif %}
-            {% endfor %}
-
+    {% if classification_result.result == '1' %}
+        <div class="jumbotron">
+            <h1 class="text-center" style="color: red;">Bad</h1>
         </div>
-    </div>
+    {% else %}
+        <div class="jumbotron">
+            <h1 class="text-center" style="color: green;">Good</h1>
+        </div>
+    {% endif %}
 
 {% endblock %}

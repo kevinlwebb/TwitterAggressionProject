@@ -27,11 +27,10 @@ from nltk.tokenize import word_tokenize
 
 def load_data(database_filepath):
     engine = create_engine('sqlite:///' + database_filepath)
-    df = pd.read_sql_table('project', engine)
-    X = df.message.values
-    Y = df[df.columns[4:]].values
-    category_names = list(df.columns[4:])
-    return X, Y, category_names
+    df = pd.read_sql_table('tweets', engine)
+    X = df.cleaned_tweet.values
+    Y = df.label.values
+    return X, Y
 
 
 def tokenize(text):
@@ -44,45 +43,33 @@ def tokenize(text):
     # tokenize text
     tokens = word_tokenize(text)
     
-    # lemmatize andremove stop words
+    # lemmatize and remove stop words
     tokens = [lemmatizer.lemmatize(word).lower().strip() for word in tokens if word.lower().strip() not in stop_words]
 
     return tokens
 
 
 def build_model():
+    
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
         ('tfidf', TfidfTransformer()),
-        # ('clf', MultiOutputClassifier(OneVsRestClassifier(RandomForestClassifier())))
-        ('clf', MultiOutputClassifier(OneVsRestClassifier(LinearSVC(random_state = 0))))
+        ('clf', RandomForestClassifier())
     ])
-    
-    parameters = {
-    #    'tfidf__smooth_idf':[True, False],
-    #     'clf__estimator__estimator__C': [1, 2, 5],
-    #     'vect__ngram_range': ((1, 1), (1, 2))
-    #     'vect__max_df': (0.5, 0.75, 1.0),
-    #     'vect__max_features': (None, 5000, 10000),
-    #    'tfidf__use_idf': (True, False),
-    #     'clf__n_estimators': [50, 100, 200],
-    #     'clf__min_samples_split': [2, 3, 4],
 
-    }
-
-    cv = GridSearchCV(pipeline, param_grid=parameters, scoring='precision_samples', cv = 5)
-    
-    return cv
+    return pipeline
 
 
 
-def evaluate_model(model, X_test, Y_test, category_names):
-    Y_pred = model.predict(X_test)
-    print(classification_report(Y_test, Y_pred, target_names = category_names))
-    print("\n")
-    print("Accuracy")
-    for i in range(Y_test.shape[1]):
-        print('%25s accuracy : %.2f' %(category_names[i], accuracy_score(Y_test[:,i], Y_pred[:,i])))
+def evaluate_model(model, X_test, y_test):
+    y_pred = model.predict(X_test)
+    labels = np.unique(y_pred)
+    confusion_mat = confusion_matrix(y_test, y_pred, labels=labels)
+    accuracy = (y_pred == y_test).mean()
+
+    print("Labels:", labels)
+    print("Confusion Matrix:\n", confusion_mat)
+    print("Accuracy:", accuracy)
     
 
 
@@ -94,7 +81,7 @@ def main():
     if len(sys.argv) == 3:
         database_filepath, model_filepath = sys.argv[1:]
         print('Loading data...\n    DATABASE: {}'.format(database_filepath))
-        X, Y, category_names = load_data(database_filepath)
+        X, Y = load_data(database_filepath)
         X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.2)
         
         print('Building model...')
@@ -104,7 +91,7 @@ def main():
         model.fit(X_train, Y_train)
         
         print('Evaluating model...')
-        evaluate_model(model, X_test, Y_test, category_names)
+        evaluate_model(model, X_test, Y_test)
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
@@ -115,7 +102,7 @@ def main():
         print('Please provide the filepath of the disaster messages database '\
               'as the first argument and the filepath of the pickle file to '\
               'save the model to as the second argument. \n\nExample: python '\
-              'train_classifier.py ../data/DisasterResponse.db classifier.pkl')
+              'train_classifier.py ../data/TweetSentiment.db classifier.pkl')
 
 
 if __name__ == '__main__':
