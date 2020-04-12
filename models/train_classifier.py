@@ -26,6 +26,17 @@ from nltk.tokenize import word_tokenize
 
 
 def load_data(database_filepath):
+    '''
+    Returns X (features) and Y (label)
+
+    Parameters:
+        database_filepath (str):The file path to the database.
+
+    Returns:
+        X (Array):A dataframe with the project data.  
+        Y (Array):A dataframe with the project data.   
+    '''
+
     engine = create_engine('sqlite:///' + database_filepath)
     df = pd.read_sql_table('tweets', engine)
     X = df.cleaned_tweet.values
@@ -34,6 +45,16 @@ def load_data(database_filepath):
 
 
 def tokenize(text):
+    '''
+    Returns list of clean words
+
+    Parameters:
+        text (str):The text to be cleaned.
+
+    Returns:
+        tokens (list):A list with clean words. 
+    '''
+
     stop_words = stopwords.words("english")
     lemmatizer = WordNetLemmatizer()
     
@@ -50,6 +71,12 @@ def tokenize(text):
 
 
 def build_model():
+    '''
+    Returns a pipeline that incudes Bag of Words, TF-IDF, and Random Forest
+
+    Returns:
+        pipeline (Pipeline):A pipeline for the input data to follow before the classifier. 
+    '''
     
     pipeline = Pipeline([
         ('vect', CountVectorizer(tokenizer=tokenize)),
@@ -62,6 +89,16 @@ def build_model():
 
 
 def evaluate_model(model, X_test, y_test):
+    '''
+    Prints labels, the confusion matrix, and accuracy of the given model
+
+    Parameters:
+        model (Pipeline):A pipeline for the input data to follow before the classifier.
+        X_test (Array):The array to be used for predictions.
+        y_test (Array):The array to be used for comparisons.
+
+    '''
+   
     y_pred = model.predict(X_test)
     labels = np.unique(y_pred)
     confusion_mat = confusion_matrix(y_test, y_pred, labels=labels)
@@ -74,6 +111,15 @@ def evaluate_model(model, X_test, y_test):
 
 
 def save_model(model, model_filepath):
+    '''
+    Saves model
+
+    Parameters:
+        model (Pipeline):A pipeline for the input data to follow before the classifier.
+        model_filepath (str):The file path for the model to be saved.
+        
+    '''
+
     dump(model, model_filepath) 
 
 

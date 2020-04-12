@@ -2,7 +2,19 @@ import sys
 import pandas as pd
 from sqlalchemy import create_engine
 
+
 def load_data(filepath):
+    '''
+    Returns the dataframe with file type
+
+    Parameters:
+        filepath (str):The file path to the project data.
+
+    Returns:
+        df (DataFrame):A dataframe with the project data.
+        file_type (str):The type of file that contains the project data.   
+    '''
+
     if 'json' in filepath:
         df = pd.read_json(filepath, lines= True)
         file_type = "json"
@@ -14,6 +26,17 @@ def load_data(filepath):
 
 
 def clean_data(df, file_type):
+    '''
+    Returns a clean dataframe
+
+    Parameters:
+        df (DataFrame):The dataframe with the project data.
+        file_type (str):The file path to the project data.
+
+    Returns:
+        df (DataFrame):A dataframe with the project data.   
+    '''
+
     if file_type == "csv":
         df['cleaned_tweet'] = df.tweet.apply(lambda x: ' '.join([word for word in x.split() if not word.startswith('@')]))
         df['cleaned_tweet'] = df.cleaned_tweet.str.replace("#","")
@@ -27,6 +50,17 @@ def clean_data(df, file_type):
 
 
 def save_data(df, database_filename):
+    '''
+    Returns a clean dataframe
+
+    Parameters:
+        df (DataFrame):The dataframe with the project data.
+        file_type (str):The file path to the project data.
+
+    Returns:
+        df (DataFrame):A dataframe with the project data.   
+    '''
+    
     engine = create_engine('sqlite:///' + database_filename)
     df.to_sql("tweets", engine, index=False)
 
