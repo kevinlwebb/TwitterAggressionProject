@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {background-color: #eee;}
+    </style>
 </head>
 
 <body>
@@ -51,17 +54,33 @@
     </div>
 </div>
 
-<div class="container">
-    {% block content %}
-        <div class="page-header">
-            <h1 class="text-center">Overview of Training Dataset</h1>
-        </div>
-    {% endblock %}
+{% block content %}
+<div class="container" style="background-color: white;">
+
+    <h1 class="text-center">Tweet Example</h1>
+
+    <blockquote class="twitter-tweet tw-align-center">
+        <p lang="en" dir="ltr">CRASS ALERT:<br><br>Alexandria Ocasio-Cortez can eat my asshole.</p>&mdash; HornsFan29 (@HornsFan29) <a href="https://twitter.com/HornsFan29/status/1252367185772638210?ref_src=twsrc%5Etfw">April 20, 2020</a>
+    </blockquote> 
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+    <h4 class="text-center" style="padding-top: 20px;">CLASSIFICATION</h4>
+    <h1 class="text-center" style="color: red; padding: 10px;">Bad Tweet</h1>
+
+</div>
+
+<br>
+
+<div class="container" style="background-color: white;">
+
+    <h1 class="text-center">Overview of Training Dataset</h1>
 
     {% for id in ids %}
         <div id="{{id}}"></div>
     {% endfor %}
+
 </div>
+{% endblock content %}
 
 <script type="text/javascript">
     const graphs = {{graphJSON | safe}};

@@ -2,21 +2,15 @@
 {% block title %}Results{% endblock %}
 
 {% block message %}
-    <hr />
+    <hr>
+    {% if classification_result.result == '1' %}
+        <h1 class="text-center" style="color: red; padding: 30px;">Bad Tweet</h1>
+    {% else %}
+        <h1 class="text-center" style="color: green; padding: 30px;">Good Tweet</h1>
+    {% endif %}
     <h4 class="text-center">MESSAGE</h4>
     <p class="text-center"><i>{{query}}</i></p>
 {% endblock %}
 
 {% block content %}
-    <h1 class="text-center">Result</h1>
-    {% if classification_result.result == '1' %}
-        <div class="jumbotron">
-            <h1 class="text-center" style="color: red;">Bad</h1>
-        </div>
-    {% else %}
-        <div class="jumbotron">
-            <h1 class="text-center" style="color: green;">Good</h1>
-        </div>
-    {% endif %}
-
 {% endblock %}
