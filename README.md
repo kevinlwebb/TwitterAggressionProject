@@ -10,24 +10,32 @@ In this project, I created a Python Flask web application that classifies a twee
 ## Application File Layout
 
     .
-    ├── app     
-    │   ├── run.py                           # Flask file that runs app
+    ├── app
+    │   ├── __init__.py                      # Flask file that runs app
+    │   ├── views.py                         # Flask file that contains endpoints
+    │   ├── data
+    │   │   └── TweetSentiment.db            # Database for Tweet Sentiment data
+    │   ├── models
+    │   │   └── classifier.pkl               # Pickle file of model  
     │   └── templates   
     │       ├── go.html                      # Classification result page of web app
     │       └── master.html                  # Main page of web app    
-    ├── data                   
+    ├── setup                   
     │   ├── tweets.json                      # JSON Dataset with all the tweets  
     │   ├── tweet_train.csv                  # CSV Train Dataset with additional tweets
     │   ├── tweet_test.csv                   # CSV Test Dataset with additional tweets
-    │   ├── process_data.py                  # Data cleaning
-    │   └── TweetSentiment.db                # Database for Tweet Sentiment data
+    │   ├── functions.py                     # Tokenize function
+    │   ├── train_classifier.py              # Train ML model
+    │   └── process_data.py                  # Data cleaning
     ├── models
     │   ├── train_classifier.py              # Train ML model      
     │   └── classifier.pkl                   # Pickle file of model  
     ├── imgs   
     ├── README.md
     ├── Report.ipynb                         # Project Report
-    └── requirements.txt
+    ├── Procfile                             # Specifies commands executed on startup
+    ├── run.py                               # Entry point for the application
+    └── requirements.txt                     # List of libraries to be installed
 
 ## Instructions (Skip steps 2 and 3 if .pkl file and .db database exists):
 1. Run the following command to install necessary libraries.
@@ -36,14 +44,14 @@ In this project, I created a Python Flask web application that classifies a twee
 2. Run the following commands in the project's root directory to create the database and model.
 
     - To run ETL pipeline that cleans data and stores in database
-        `python data/process_data.py data/tweet_train.csv data/TweetSentiment.db`
+        `python setup/process_data.py setup/tweet_train.csv app/data/TweetSentiment.db`
     - To run ML pipeline that trains classifier and saves
-        `python models/train_classifier.py data/TweetSentiment.db models/classifier.pkl`
+        `python setup/train_classifier.py app/data/TweetSentiment.db app/models/classifier.pkl`
 
 3. Run the following command in the app's directory to run the web app.
-    `python run.py`
+    `gunicorn run:app`
 
-4. Go to http://0.0.0.0:33507/
+4. Go to http://127.0.0.1:8000
 
 ## Example
 Type in: 
