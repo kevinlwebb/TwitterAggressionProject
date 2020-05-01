@@ -7,6 +7,9 @@ Bullying has evolved to cyberbullying through the medium of the Internet and onl
 
 In this project, I created a Python Flask web application that classifies a tweet (including hashtags) between good or bad. The model is trained on a dataset of classified Tweets from [Dataturks through Kaggle](https://www.kaggle.com/dataturks/dataset-for-detection-of-cybertrolls) and utilizes the combination of Bag of Words and TF-IDF to focus on the frequency of individual words. 
 
+## Web Link
+https://twitter-aggression.herokuapp.com/
+
 ## Application File Layout
 
     .
@@ -60,7 +63,7 @@ Don't come over here, we hate you #loser
 ```
 and click `Classify Tweet`
 
-![Example](ex.png)
+![Example](imgs/ex.png)
 
 
 ## Summary
